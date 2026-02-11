@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUXE Fashion Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-display {
+      font-family: 'Playfair Display', serif;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    .animate-slide-in {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    .animate-pulse-once {
+      animation: pulse 0.3s ease-out;
+    }
+    .product-card:hover .product-image {
+      transform: scale(1.05);
+    }
+    .product-card:hover .quick-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .quick-actions {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+    .size-btn.active {
+      background: #1a1a1a;
+      color: white;
+    }
+    .color-btn.active {
+      ring: 2px;
+      ring-offset: 2px;
+    }
+    .tab-btn.active {
+      border-bottom: 2px solid #1a1a1a;
+      color: #1a1a1a;
+    }
+    .filter-checkbox:checked + label {
+      background: #1a1a1a;
+      color: white;
+    }
+    .toast {
+      animation: slideIn 0.3s ease-out, fadeIn 0.3s ease-out reverse 2.5s forwards;
+    }
+  </style>
+</head>
+<body class="h-full bg-stone-50 text-stone-800 overflow-auto">
+  <div id="app" class="w-full h-full flex flex-col">
+    
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Promo Banner -->
+    <div id="promo-banner" class="bg-stone-900 text-white text-center py-2 px-4 text-sm">
+      <span id="promo-text">✨ FREE SHIPPING on orders over $100 | Use code STYLE20 for 20% off</span>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <a href="#" onclick="navigateTo('home')" class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-stone-900 rounded-full flex items-center justify-center">
+              <span class="text-white font-display text-lg">L</span>
+            </div>
+            <span id="store-name-header" class="font-display text-2xl font-semibold tracking-tight">LUXE</span>
+          </a>
+
+          <!-- Navigation -->
+          <nav class="hidden md:flex items-center gap-8">
+            <a href="#" onclick="navigateTo('home')" class="text-sm font-medium hover:text-stone-600 transition">Home</a>
+            <div class="relative group">
+              <a href="#" onclick="navigateTo('category', {category: 'women'})" class="text-sm font-medium hover:text-stone-600 transition flex items-center gap-1">
+                Women
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </a>
+              <div class="absolute top-full left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4">
+                <a href="#" onclick="navigateTo('category', {category: 'women', subcategory: 'dresses'})" class="block py-2 text-sm hover:text-stone-600">Dresses</a>
+                <a href="#" onclick="navigateTo('category', {category: 'women', subcategory: 'tops'})" class="block py-2 text-sm hover:text-stone-600">Tops</a>
+                <a href="#" onclick="navigateTo('category', {category: 'women', subcategory: 'pants'})" class="block py-2 text-sm hover:text-stone-600">Pants</a>
+                <a href="#" onclick="navigateTo('category', {category: 'women', subcategory: 'outerwear'})" class="block py-2 text-sm hover:text-stone-600">Outerwear</a>
+              </div>
+            </div>
+            <div class="relative group">
+              <a href="#" onclick="navigateTo('category', {category: 'men'})" class="text-sm font-medium hover:text-stone-600 transition flex items-center gap-1">
+                Men
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </a>
+              <div class="absolute top-full left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4">
+                <a href="#" onclick="navigateTo('category', {category: 'men', subcategory: 'shirts'})" class="block py-2 text-sm hover:text-stone-600">Shirts</a>
+                <a href="#" onclick="navigateTo('category', {category: 'men', subcategory: 'pants'})" class="block py-2 text-sm hover:text-stone-600">Pants</a>
+                <a href="#" onclick="navigateTo('category', {category: 'men', subcategory: 'jackets'})" class="block py-2 text-sm hover:text-stone-600">Jackets</a>
+                <a href="#" onclick="navigateTo('category', {category: 'men', subcategory: 'suits'})" class="block py-2 text-sm hover:text-stone-600">Suits</a>
+              </div>
+            </div>
+            <a href="#" onclick="navigateTo('category', {category: 'accessories'})" class="text-sm font-medium hover:text-stone-600 transition">Accessories</a>
+            <a href="#" onclick="navigateTo('category', {category: 'sale'})" class="text-sm font-medium text-red-600 hover:text-red-700 transition">Sale</a>
+          </nav>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-4">
+            <!-- Search -->
+            <button onclick="toggleSearch()" class="p-2 hover:bg-stone-100 rounded-full transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </button>
+            
+            <!-- Wishlist -->
+            <button onclick="navigateTo('wishlist')" class="p-2 hover:bg-stone-100 rounded-full transition relative">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              <span id="wishlist-count" class="absolute -top-1 -right-1 w-5 h-5 bg-stone-900 text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
+            </button>
+            
+            <!-- Cart -->
+            <button onclick="toggleCart()" class="p-2 hover:bg-stone-100 rounded-full transition relative">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-stone-900 text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
+            </button>
+            
+            <!-- Account -->
+            <button onclick="handleAccountClick()" class="p-2 hover:bg-stone-100 rounded-full transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            </button>
+
+            <!-- Mobile Menu -->
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2 hover:bg-stone-100 rounded-full transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div id="search-bar" class="hidden bg-white border-t border-stone-100 py-4 px-4">
+        <div class="max-w-2xl mx-auto relative">
+          <input type="text" id="search-input" placeholder="Search for products..." class="w-full pl-12 pr-4 py-3 bg-stone-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-stone-300" oninput="handleSearch(this.value)">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <div id="search-suggestions" class="absolute top-full left-0 right-0 mt-2 bg-white shadow-lg rounded-lg hidden max-h-64 overflow-auto"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-black/50" onclick="toggleMobileMenu()">
+      <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-xl" onclick="event.stopPropagation()">
+        <div class="p-4 border-b border-stone-100 flex justify-between items-center">
+          <span class="font-display text-xl font-semibold">Menu</span>
+          <button onclick="toggleMobileMenu()" class="p-2 hover:bg-stone-100 rounded-full">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <nav class="p-4 space-y-4">
+          <a href="#" onclick="navigateTo('home'); toggleMobileMenu();" class="block py-2 text-lg font-medium">Home</a>
+          <a href="#" onclick="navigateTo('category', {category: 'women'}); toggleMobileMenu();" class="block py-2 text-lg font-medium">Women</a>
+          <a href="#" onclick="navigateTo('category', {category: 'men'}); toggleMobileMenu();" class="block py-2 text-lg font-medium">Men</a>
+          <a href="#" onclick="navigateTo('category', {category: 'accessories'}); toggleMobileMenu();" class="block py-2 text-lg font-medium">Accessories</a>
+          <a href="#" onclick="navigateTo('category', {category: 'sale'}); toggleMobileMenu();" class="block py-2 text-lg font-medium text-red-600">Sale</a>
+          <hr class="my-4">
+          <a href="#" onclick="handleAccountClick(); toggleMobileMenu();" class="block py-2 text-lg font-medium">My Account</a>
+          <a href="#" onclick="navigateTo('wishlist'); toggleMobileMenu();" class="block py-2 text-lg font-medium">Wishlist</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="hidden fixed inset-0 z-50 bg-black/50" onclick="toggleCart()">
+      <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl animate-slide-in flex flex-col" onclick="event.stopPropagation()">
+        <div class="p-4 border-b border-stone-100 flex justify-between items-center">
+          <span class="font-display text-xl font-semibold">Shopping Cart</span>
+          <button onclick="toggleCart()" class="p-2 hover:bg-stone-100 rounded-full">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-auto p-4 space-y-4">
+          <!-- Cart items will be rendered here -->
+        </div>
+        <div class="p-4 border-t border-stone-100 space-y-4">
+          <div class="flex justify-between text-lg font-semibold">
+            <span>Subtotal</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <button onclick="navigateTo('checkout'); toggleCart();" class="w-full py-3 bg-stone-900 text-white rounded-full font-medium hover:bg-stone-800 transition">
+            Proceed to Checkout
+          </button>
+          <button onclick="navigateTo('cart'); toggleCart();" class="w-full py-3 border border-stone-300 rounded-full font-medium hover:bg-stone-50 transition">
+            View Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1">
+      <!-- Content will be rendered here -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-white mt-16">
+      <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="font-display text-2xl font-semibold mb-4">LUXE</h3>
+            <p class="text-stone-400 text-sm mb-4">Premium fashion for the modern lifestyle. Quality meets style in every piece.</p>
+            <div class="flex gap-4">
+              <a href="#" class="w-10 h-10 bg-stone-800 rounded-full flex items-center justify-center hover:bg-stone-700 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+              </a>
+              <a href="#" class="w-10 h-10 bg-stone-800 rounded-full flex items-center justify-center hover:bg-stone-700 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </a>
+              <a href="#" class="w-10 h-10 bg-stone-800 rounded-full flex items-center justify-center hover:bg-stone-700 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4">Shop</h4>
+            <ul class="space-y-2 text-stone-400 text-sm">
+              <li><a href="#" onclick="navigateTo('category', {category: 'women'})" class="hover:text-white transition">Women</a></li>
+              <li><a href="#" onclick="navigateTo('category', {category: 'men'})" class="hover:text-white transition">Men</a></li>
+              <li><a href="#" onclick="navigateTo('category', {category: 'accessories'})" class="hover:text-white transition">Accessories</a></li>
+              <li><a href="#" onclick="navigateTo('category', {category: 'sale'})" class="hover:text-white transition">Sale</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4">Help</h4>
+            <ul class="space-y-2 text-stone-400 text-sm">
+              <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
+              <li><a href="#" class="hover:text-white transition">Returns</a></li>
+              <li><a href="#" class="hover:text-white transition">Size Guide</a></li>
+              <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4">Newsletter</h4>
+            <p class="text-stone-400 text-sm mb-4">Subscribe to get special offers and style updates.</p>
+            <form onsubmit="event.preventDefault(); showToast('Subscribed successfully!', 'success');" class="flex gap-2">
+              <input type="email" placeholder="Your email" class="flex-1 px-4 py-2 bg-stone-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-stone-600">
+              <button type="submit" class="px-4 py-2 bg-white text-stone-900 rounded-full text-sm font-medium hover:bg-stone-100 transition">Subscribe</button>
+            </form>
+          </div>
+        </div>
+        <div class="mt-12 pt-8 border-t border-stone-800 text-center text-stone-400 text-sm">
+          <p>&copy; 2024 LUXE Fashion. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ============================================
+    // STATE MANAGEMENT
+    // ============================================
+    let appState = {
+      currentPage: 'home',
+      currentUser: null,
+      cart: [],
+      wishlist: [],
+      orders: [],
+      users: [],
+      pageParams: {}
+    };
+
+    const defaultConfig = {
+      store_name: 'LUXE',
+      tagline: 'Premium Fashion',
+      hero_title: 'New Season Arrivals',
+      hero_subtitle: 'Discover the latest trends in fashion with our curated collection of premium clothing and accessories.',
+      promo_banner: '✨ FREE SHIPPING on orders over $100 | Use code STYLE20 for 20% off',
+      background_color: '#fafaf9',
+      surface_color: '#ffffff',
+      text_color: '#1c1917',
+      primary_action_color: '#1c1917',
+      secondary_action_color: '#78716c'
+    };
+
+    // Product Data
+    const products = [
+      { id: 'p1', name: 'Silk Blend Blouse', price: 89, originalPrice: 129, category: 'women', subcategory: 'tops', colors: ['#f5f5f4', '#1c1917', '#fecaca'], sizes: ['XS', 'S', 'M', 'L', 'XL'], image: '👚', rating: 4.8, reviews: 124, isNew: true, isSale: true, description: 'Luxurious silk blend blouse with a relaxed fit. Perfect for both office and evening wear.' },
+      { id: 'p2', name: 'Tailored Wool Blazer', price: 249, category: 'women', subcategory: 'outerwear', colors: ['#1c1917', '#78716c', '#292524'], sizes: ['XS', 'S', 'M', 'L'], image: '🧥', rating: 4.9, reviews: 89, isNew: true, description: 'Impeccably tailored wool blazer with a modern silhouette. A wardrobe essential.' },
+      { id: 'p3', name: 'High-Waist Trousers', price: 129, category: 'women', subcategory: 'pants', colors: ['#1c1917', '#f5f5f4', '#a8a29e'], sizes: ['XS', 'S', 'M', 'L', 'XL'], image: '👖', rating: 4.7, reviews: 156, description: 'Elegant high-waist trousers with a flattering fit. Versatile enough for any occasion.' },
+      { id: 'p4', name: 'Cashmere Sweater', price: 189, originalPrice: 249, category: 'women', subcategory: 'tops', colors: ['#fef3c7', '#fecaca', '#d1fae5', '#1c1917'], sizes: ['S', 'M', 'L'], image: '🧶', rating: 4.9, reviews: 203, isSale: true, description: 'Ultra-soft cashmere sweater for ultimate comfort and style.' },
+      { id: 'p5', name: 'Linen Summer Dress', price: 159, category: 'women', subcategory: 'dresses', colors: ['#f5f5f4', '#fef9c3', '#bfdbfe'], sizes: ['XS', 'S', 'M', 'L', 'XL'], image: '👗', rating: 4.6, reviews: 78, isNew: true, description: 'Breathable linen dress perfect for warm days. Effortlessly elegant.' },
+      { id: 'p6', name: 'Premium Cotton Shirt', price: 79, category: 'men', subcategory: 'shirts', colors: ['#f5f5f4', '#bfdbfe', '#1c1917'], sizes: ['S', 'M', 'L', 'XL', 'XXL'], image: '👔', rating: 4.7, reviews: 245, description: 'Classic cotton shirt with a modern fit. Essential for every gentleman.' },
+      { id: 'p7', name: 'Slim Fit Chinos', price: 99, category: 'men', subcategory: 'pants', colors: ['#78716c', '#1c1917', '#292524'], sizes: ['28', '30', '32', '34', '36'], image: '👖', rating: 4.8, reviews: 189, description: 'Comfortable slim-fit chinos that transition seamlessly from office to weekend.' },
+      { id: 'p8', name: 'Leather Bomber Jacket', price: 349, originalPrice: 449, category: 'men', subcategory: 'jackets', colors: ['#1c1917', '#78716c'], sizes: ['S', 'M', 'L', 'XL'], image: '🧥', rating: 4.9, reviews: 67, isSale: true, description: 'Premium leather bomber jacket with timeless appeal.' },
+      { id: 'p9', name: 'Merino Wool Cardigan', price: 169, category: 'men', subcategory: 'shirts', colors: ['#1c1917', '#78716c', '#292524'], sizes: ['S', 'M', 'L', 'XL'], image: '🧥', rating: 4.6, reviews: 92, isNew: true, description: 'Soft merino wool cardigan for layered sophistication.' },
+      { id: 'p10', name: 'Italian Leather Belt', price: 89, category: 'accessories', colors: ['#1c1917', '#78716c'], sizes: ['S', 'M', 'L'], image: '👜', rating: 4.8, reviews: 156, description: 'Handcrafted Italian leather belt with premium buckle.' },
+      { id: 'p11', name: 'Silk Scarf', price: 69, originalPrice: 99, category: 'accessories', colors: ['#fecaca', '#bfdbfe', '#fef9c3', '#d1fae5'], sizes: ['One Size'], image: '🧣', rating: 4.7, reviews: 89, isSale: true, description: 'Luxurious silk scarf with elegant patterns.' },
+      { id: 'p12', name: 'Leather Tote Bag', price: 259, category: 'accessories', colors: ['#1c1917', '#78716c', '#292524'], sizes: ['One Size'], image: '👜', rating: 4.9, reviews: 178, isNew: true, description: 'Spacious leather tote bag for everyday elegance.' }
+    ];
+
+    // ============================================
+    // DATA SDK INTEGRATION
+    // ============================================
+    const dataHandler = {
+      onDataChanged(data) {
+        // Process stored data
+        appState.users = data.filter(d => d.type === 'user');
+        appState.cart = data.filter(d => d.type === 'cart_item' && d.user_id === appState.currentUser?.email);
+        appState.wishlist = data.filter(d => d.type === 'wishlist_item' && d.user_id === appState.currentUser?.email);
+        appState.orders = data.filter(d => d.type === 'order' && d.user_id === appState.currentUser?.email);
+        
+        // Check for logged in user in session
+        const savedUser = sessionStorage.getItem('currentUser');
+        if (savedUser && !appState.currentUser) {
+          const userData = JSON.parse(savedUser);
+          const user = appState.users.find(u => u.email === userData.email);
+          if (user) {
+            appState.currentUser = user;
+            appState.cart = data.filter(d => d.type === 'cart_item' && d.user_id === user.email);
+            appState.wishlist = data.filter(d => d.type === 'wishlist_item' && d.user_id === user.email);
+            appState.orders = data.filter(d => d.type === 'order' && d.user_id === user.email);
+          }
+        }
+        
+        updateCartUI();
+        updateWishlistUI();
+        
+        // Re-render current page if needed
+        if (appState.currentPage === 'dashboard' || appState.currentPage === 'wishlist' || appState.currentPage === 'cart') {
+          renderPage(appState.currentPage, appState.pageParams);
+        }
+      }
+    };
+
+    // ============================================
+    // ELEMENT SDK INTEGRATION  
+    // ============================================
+    async function initApp() {
+      // Initialize Data SDK
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize Data SDK');
+        }
+      }
+
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            // Update store name
+            const storeNameHeader = document.getElementById('store-name-header');
+            if (storeNameHeader) {
+              storeNameHeader.textContent = config.store_name || defaultConfig.store_name;
+            }
+            
+            // Update promo banner
+            const promoText = document.getElementById('promo-text');
+            if (promoText) {
+              promoText.textContent = config.promo_banner || defaultConfig.promo_banner;
+            }
+            
+            // Update colors
+            document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+            
+            // Re-render home page if on home
+            if (appState.currentPage === 'home') {
+              renderHomePage(config);
+            }
+          },
+          mapToCapabilities: (config) => ({
